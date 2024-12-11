@@ -25,6 +25,6 @@ class TopQueryRepository
 
     public function deleteAll()
     {
-        return $this->model->truncate();
+        return $this->model->query()->delete();
     }
 }
