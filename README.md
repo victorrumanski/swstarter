@@ -16,8 +16,23 @@ https://formulae.brew.sh/formula/colima
 
 ```shell
  docker context use colima
- docker-compose up
 ```
+
+#### Install Laravel dependencies
+
+```shell
+cd backend
+composer install
+```
+
+
+#### Start docker-compose
+
+```shell
+cd ..
+docker-compose up
+```
+
 
 # Attention
 
