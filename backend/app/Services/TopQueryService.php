@@ -33,12 +33,20 @@ class TopQueryService
     {
         DB::transaction(function () {
             $this->deleteAll();
-            $query = "select metric_type, metric_data, count(1) totalhits" .
-                " , count(1) * 100 /  total.t AS percent" .
-                " from metrics" .
-                " cross join (select count(1) t from metrics) total" .
-                " group by metric_type, metric_data, total.t" .
-                " order by percent desc limit 5";
+
+            $query = 
+            " with total as (" .
+            "     select count(1) t from metrics" .
+            " )," .
+            " hits as (" .
+            "         select metric_type, metric_data, count(1) totalhits" .
+            "         from metrics" .
+            "         group by metric_type, metric_data" .
+            " )" .
+            " select m.metric_type, m.metric_data, m.totalhits, m.totalhits * 100 / total.t as percent" .
+            " from hits m join total on 1=1 " .
+            " order by percent desc limit 5 ";
+            
             DB::statement($query);
 
             $results = DB::select($query);
