@@ -1,0 +1,18 @@
+.layout-container {
+  display: grid;
+
+  header {
+    padding: 18px;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    min-width: 100%;
+    box-shadow: 0 2px 0 0 var(--gainsboro);
+    background-color: #fff;
+    margin-bottom: 30px;
+    a {
+      color: var(--green-teal);
+      text-decoration: none;
+    }
+  }
+}

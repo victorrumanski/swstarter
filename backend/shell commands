@@ -1,0 +1,10 @@
+#To run the artisan command in the background:
+APP_ENV=testing php artisan schedule:work --tries=3 >/dev/null 2>&1 &
+
+# It won't terminate if you close the terminal. To find it again:
+#ps -aux | grep artisan
+ps -A | grep artisan | awk '{print $1}'
+
+#Find the PID of the process and then:
+
+kill [PID]

@@ -1,0 +1,17 @@
+button {
+  background-color: var(--green-teal);
+  text-align: center;
+  padding: 10px;
+  border-radius: 17px;
+  outline: none;
+  border: 0;
+  color: #fff;
+  text-transform: uppercase;
+  font-family: "Montserrat";
+  font-weight: 700;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: var(--pinkish-grey);
+  }
+}

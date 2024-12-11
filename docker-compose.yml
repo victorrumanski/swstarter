@@ -1,0 +1,82 @@
+networks:
+  app-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata2:
+    driver: local
+
+services:
+  # #PHP Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: digitalocean.com/php
+    container_name: backend
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: backend
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+
+  # Frontend
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./backend:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  #MySql Service
+  mysql:
+    image: mysql:8.0-debian
+    container_name: mysql
+    # restart: unless-stopped
+    tty: true
+    environment:
+      MYSQL_DATABASE: swstarterdb
+      MYSQL_USER: swstarteruser
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: vicecity
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata2:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
