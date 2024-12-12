@@ -1,3 +1,4 @@
+import React from "react";
 import Button from "../Button/Button";
 import { useNavigate } from "react-router-dom";
 
@@ -47,4 +48,4 @@ function Results({ results, loading }) {
     </div>
   );
 }
-export default Results;
+export default React.memo(Results);
