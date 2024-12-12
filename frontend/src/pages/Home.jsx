@@ -19,25 +19,25 @@ function Home() {
   const [results, setResults] = useState([]);
 
   const searchStartWars = async () => {
-    await axios
-      .get(`${swURL}/${filterType}?format=json&search=${term}`)
-      .then((response) => {
-        const mergedResults = response.data.results.map(
-          ({ url, name, title, ...rest }) => {
-            const id = url
-              .substring(0, url.length - 1)
-              .split("/")
-              .pop();
-            return filterType === "people"
-              ? { name, id, url, resourceType: filterType, ...rest }
-              : { name: title, id, url, resourceType: filterType, ...rest };
-          }
-        );
-        setResults(mergedResults);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    try {
+      const response = await axios.get(
+        `${swURL}/${filterType}?format=json&search=${term}`
+      );
+      const mergedResults = response.data.results.map(
+        ({ url, name, title, ...rest }) => {
+          const id = url
+            .substring(0, url.length - 1)
+            .split("/")
+            .pop();
+          return filterType === "people"
+            ? { name, id, url, resourceType: filterType, ...rest }
+            : { name: title, id, url, resourceType: filterType, ...rest };
+        }
+      );
+      setResults(mergedResults);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const saveMetric = async (query) => {
@@ -45,14 +45,12 @@ function Home() {
       metric_type: "star_wars",
       metric_data: query,
     };
-    await axios
-      .post(`${serverURL}/metrics`, obj)
-      .then((response) => {
-        console.log("save metric response", response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    try {
+      const response = await axios.post(`${serverURL}/metrics`, obj);
+      console.log("save metric response", response);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const doSearch = async (e) => {
@@ -60,12 +58,7 @@ function Home() {
     setResults(null);
     setLoading(true);
     await searchStartWars();
-    try {
-      await saveMetric(`/${filterType}/?search=${term}`);
-      //catch err so UI still works in case our event tracking api throws an error
-    } catch (err) {
-      console.log(err);
-    }
+    await saveMetric(`/${filterType}/?search=${term}`);
     setLoading(false);
   };
 
